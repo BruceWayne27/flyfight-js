@@ -1,0 +1,312 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<title> </title>
+<style>
+.container{
+	width:300px;
+	margin:20px auto;
+	position:relative;
+	overflow:hidden;
+	}
+	.enemy{position:absolute;}
+	#myplane{position:absolute;bottom:10px;left:120px;}
+</style>
+	<script src="engine.js"></script>
+<script>
+
+ <!-- function keydownEvent(e){ -->
+<!-- //alert('test key'); -->
+
+<!-- /*keydown { target: body, key: "a", charCode: 0, keyCode: 65 } -->
+<!-- keydown { target: body, key: "s", charCode: 0, keyCode: 83 } -->
+<!-- keydown { target: body, key: "d", charCode: 0, keyCode: 68 } -->
+<!-- keydown { target: body, key: "w", charCode: 0, keyCode: 87 }*/ -->
+
+		<!-- var ev=e||event; -->
+		
+		<!-- //console.log(ev); -->
+		<!-- var keyCode=ev.keyCode;//input key down -->
+		<!-- //console.log(key); -->
+		<!-- //use keycode to know plane how to fly  -->
+		<!-- if(keyCode==Contances.key_w){ -->
+		<!-- goingw=ture; -->
+		<!-- //console.log('up'); -->
+		<!-- /*var w=$('myplane').style.bottom;//get bottom -->
+		<!-- //console.log(y); -->
+		<!-- w= w.replace('px','')-0;//replace char px to '' and change  -->
+		
+		<!-- w+=speed;*/ -->
+			<!-- //judge boundary  -->
+		
+		<!-- //char number too number -->
+		<!-- //$('myplane').style.bottom=w+"px"; -->
+	
+		<!-- }  -->
+		<!-- else if(keyCode==Contances.key_s){ -->
+		<!-- //console.log('up'); -->
+		<!-- /*var s=$('myplane').style.bottom;//get bottom -->
+		<!-- //console.log(y); -->
+		<!-- s=s.replace('px','')-0;//replace char px to '' and change  -->
+		<!-- s-=speed;*/ -->
+		<!-- var s=gety($(planeId))-Contances.SPEED; -->
+			<!-- //judge boundary  -->
+		<!-- if(s<Contances.boundary_s){ -->
+		<!-- return 0; -->
+		<!-- }  -->
+		<!-- //char number too number -->
+		<!-- //$('myplane').style.bottom=s+"px"; -->
+		<!-- sety($(planeId),s); -->
+		<!-- } -->
+		<!-- else if(keyCode==Contances.key_a){ -->
+		<!-- //console.log('up'); -->
+		<!-- /*var a=$('myplane').style.left;//get bottom -->
+		<!-- //console.log(y); -->
+		<!-- a= a.replace('px','')-0;//replace char px to '' and change  -->
+		<!-- a-=speed;*/ -->
+		<!-- var a=getx($(planeId))-Contances.SPEED; -->
+			<!-- //judge boundary  -->
+		<!-- if(a<Contances.boundary_a){ -->
+		<!-- return 0; -->
+		<!-- } -->
+		<!-- //char number too number -->
+		<!-- //$('myplane').style.left=a+"px"; -->
+		<!-- setx($(planeId),a);	 -->
+		<!-- } -->
+		<!-- else if(keyCode==Contances.key_d){ -->
+		<!-- //console.log('up'); -->
+		<!-- /*var d=$('myplane').style.left;//get bottom -->
+		<!-- //console.log(y); -->
+		<!-- d= d.replace('px','')-0;//replace char px to '' and change  -->
+		<!-- d+=speed;*/ -->
+		<!-- var d=getx($(planeId))+Contances.SPEED; -->
+			<!-- //judge boundary  -->
+		<!-- if(d>Contances.boundary_d){ -->
+		<!-- return 0; -->
+		<!-- } -->
+		<!-- //char number too number -->
+		<!-- //$('myplane').style.left=d+"px"; -->
+		<!-- setx($(planeId),d); -->
+			<!-- sety($(planeId),w); -->
+		<!-- } -->
+		
+		
+	<!-- }   -->
+	
+	function keydownEvent(e){
+		var ev=e||event;
+		var keyCode=ev.keyCode;//input key down
+		if(keyCode==Contances.key_w){
+		goingw=true;
+		}else if(keyCode==Contances.key_s){
+		goings=true;
+		}else if(keyCode==Contances.key_a){
+		goinga=true;
+		}else if(keyCode==Contances.key_d){
+		goingd=true;
+		}
+
+		}
+	function keyupEvent(e){
+		var ev=e||event;
+		var keyCode=ev.keyCode;//input key down
+		if(keyCode==Contances.key_w){
+		goingw=false;
+		}else if(keyCode==Contances.key_s){
+		goings=false;
+		}
+		else if(keyCode==Contances.key_a){
+		goinga=false;
+		}
+		else if(keyCode==Contances.key_d){
+		goingd=false;
+		}
+
+		}
+	//set fps 
+	var gameInterval=setInterval(function(){
+			if(goingw){
+			var w=gety($(planeId))+Contances.SPEED;
+		if(w>Contances.boundary_w){
+		return 0;
+			}
+			sety($(planeId),w);
+				}
+		if(goings){
+			var s=gety($(planeId))-Contances.SPEED;
+		if(s<Contances.boundary_s){
+		return 0;
+			}
+			sety($(planeId),s);
+				}
+		if(goinga){
+			var a=getx($(planeId))-Contances.SPEED;
+		if(a<Contances.boundary_a){
+		return 0;
+			}
+			setx($(planeId),a);
+				}
+			if(goingd){
+			var d=getx($(planeId))+Contances.SPEED;
+		if(d>Contances.boundary_d){
+		return 0;
+			}
+			setx($(planeId),d);
+				}					
+		
+		//搜索子弹
+		var bullets =document.getElementsByClassName('bullet');
+				if(bullets){
+				for(var i=0;i < bullets.length ; i++){
+				var y=gety(bullets[i])+30;
+				if(y>Contances.boundary_w+pheight){
+				$('container').removeChild(bullets[i]);
+					continue;
+				}
+					sety(bullets[i],y);
+					//扫描碰撞	
+					//遍历敌机
+				var enemies=document.getElementsByClassName("enemy");
+				for(var j=0;j<enemies.length;j++){
+					var x1=getx(enemies[j]);
+					var y1=gety(enemies[j]);
+					var x2=getx(bullets[i]);
+					var y2=y;
+					if(Math.abs(x1-x2+20)<ewidth&&Math.abs(y1-y2)< eheight/*&&false*/){
+					//alert("target shoot");
+					//enemies[j].src="img/enemy1_down1.png";
+					//enemies[j].src="img/enemy1_down2.png";
+					enemies[j].src="img/enemy1_down3.png";
+					var currentScore=$('score').innerHTML-0;
+					currentScore+=100;
+					
+					if(currentScore%1000==0){
+					enemyspeed++;
+					if(enemyspeed>=15){
+					enemyspeed=15;
+					}
+					
+					}
+					if(currentScore%300==0){
+					enemyxspan-=0.01;
+					if(currentScore>=6000){
+					enemyxspan=0.05;
+					}
+					}
+
+					
+					/*if(currentScore>3000){
+					enemyxspan=2;
+					}else if(currentScore>5000){
+					enemyxspan=1;
+					}else if(currentScore>10000){
+					enemyxspan=0.05;
+					}*/
+					
+					
+				
+					
+	
+					$('score').innerHTML=currentScore; //分数
+						}
+						//me&& enemy
+					var x3=getx($(planeId));
+					var y3=gety($(planeId));
+					if(Math.abs(x1-x3+10)<ewidth&&Math.abs(y1-y3+10)<eheight/*&&false*/){
+					alert("die!!"+"分数是："+$('score').innerHTML+"");
+					clearInterval(bulletTimer);
+					clearInterval(gameInterval);
+					clearInterval(enemyTimer);
+					clearInterval(boom);
+					clearInterval(ememybir);
+					location.reload();
+					
+						}
+					
+					}	
+					}
+					}
+			time+=enemyxspan;
+					
+			},hz);
+		var bulletTimer=setInterval(function(){
+		var bulletx=getx($(planeId))+pwidth/2-1;
+		var bullety=gety($(planeId))+pheight;
+		$('container').innerHTML+="<img class ='bullet'  style=\"position:absolute;left: "+bulletx+"px;bottom:"+bullety+"px;\"src=\"img/bullet.png\"/>";
+		},bulletspeed);//bullet pinlv
+	//enemy shift
+		var enemyTimer=setInterval(function(){
+			
+			var enemies=document.getElementsByClassName('enemy');
+			for(var k=0;k<enemies.length;k++){
+				var y=gety(enemies[k])-enemyspeed;
+				sety(enemies[k],y);
+					if(y<Contances.boundary_s){
+					$('container').removeChild(enemies[k]);
+					return ;
+						}
+						var roll=enemies[k].attributes.roll.value;
+						
+						if(roll==1){
+						var x=getx(enemies[k]);
+						x=x+6*Math.sin(time);//hard level		
+					setx(enemies[k],x);
+						}
+			
+				}
+				
+				},enemyxspeed);//enemy x
+		
+		var boom=setInterval(function(){
+		var enemies=document.getElementsByClassName('enemy');
+			for(var k=0;k<enemies.length;k++){
+				if(enemies[k].src.indexOf("enemy1_down3.png")!=-1){//enemy boom
+					$('container').removeChild(enemies[k]);
+						}
+				}
+		
+			},200);
+			
+			//自动刷新enemy
+			var ememybir=setInterval(function(){
+			var x=Math.floor(250*Math.random());
+			var roll = 0;
+			if(Math.sin(x)>0){
+			 roll = 1;	
+			}
+			$('container').innerHTML+="<img roll='"+roll+"'class=\"enemy\" style=\"left:200px;bottom:650px;\" src=\"img/enemy1.png\" />";
+				},enemynumber);//enemy number
+//<img  style="position:absolute;left:28px;bottom:78px;"src="img/bullet.png"/>
+	</script>
+</head>
+<body onkeydown="keydownEvent()" onkeyup="keyupEvent()">
+	<div class="container"id="container">
+	<div id="score" style="text/-alert:right;position:absolute;right:0;padding:8px;font-size:28px;">0</div>
+	<!--<img class="enemy" style="left:200px;bottom:650px;" src="img/enemy1.png" />-->
+	<img style="width:300px;" src="img/background.png" />
+		<div id="myplane" style="width:60px;bottom:10px;left:120px;">
+			<img  style="width:100%"src="img/me2.png"/>
+		</div>
+
+	</div>
+<audio id="audio" src="bgm.mp3"></audio>
+
+<button type="button" onclick="play();">播放</button>
+
+<script type="text/javascript">
+function play(){
+    document.getElementById("audio").play();
+}
+</script>
+
+
+</body>
+
+
+
+
+
+
+
+</html>
